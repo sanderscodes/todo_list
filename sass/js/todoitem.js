@@ -12,7 +12,7 @@ export default class ToDoItem {
     getItem() {
         return this._item;
     }
-    setItem(item){
+    setItem(item) {
         this._item = item;
     }
 }

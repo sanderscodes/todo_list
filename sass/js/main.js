@@ -10,12 +10,26 @@ document.addEventListener("readystatechange", (event) => {
 });
 
 const initApp = () => {
-    refreshThePage();
+    
     const itemEntryForm = document.getElementById("itemEntryForm");
     itemEntryForm.addEventListener("submit", (event) => {
         event.preventDefault();
         processSubmission();
     });
+    const clearItems = document.getElementById("clearItems");
+    clearItems.addEventListener("click", (event) => {
+        const list = toDoList.getList();
+        if (list.length) {
+            const confirmed = confirm("Are you sure you want to clear the list?");
+            if (confirmed) {
+                toDoList.clearList();
+                // TODO update persistent data
+                refreshThePage();
+            }
+        }
+    })
+    refreshThePage();
+};
 
 const refreshThePage = () => {
     clearListDisplay();
@@ -58,7 +72,7 @@ const buildListItem = (item) => {
     container.appendChild(div);
 };
 const addClickListenerToCheckbox = (checkbox) => {
-    addClickListenerToCheckbox.addEventListener("click", (event) => {
+    checkbox.addEventListener("click", (event) => {
         toDoList.removeItemFromList(checkbox.id);
         // TODO: remove from persistent data
         setTimeout(() => {
@@ -79,6 +93,9 @@ const processSubmission = () => {
     if (!newEntryText.length) return;
     const nextItemId = calcNextItemId();
     const toDoItem = createNewItem(nextItemId, newEntryText);
+    toDoList.addItemToList(toDoItem);
+    // TODO: update persistent data
+    refreshThePage();
 };
 const getNewEntry = () => {
     return document.getElementById("newItem").value.trim();
@@ -91,3 +108,9 @@ const calcNextItemId = () => {
     }
     return nextItemId;
 };
+const createNewItem = (itemId, itemText) => {
+    const toDo = new ToDoItem();
+    toDo.setId(itemId);
+    toDo.setItem(itemText);
+    return toDo;
+}
